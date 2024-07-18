@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retira UND 304</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #0000CD;
+            margin-bottom: 20px;
+        }
+        .table-container {
+            overflow-x: auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: left;
+        }
+        th {
+            background-color: #0000CD;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        @media screen and (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+            td:before {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+                color: #0000CD	;
+            }
+            td:nth-of-type(1):before { content: "Contato"; }
+            td:nth-of-type(2):before { content: "Data e Hora"; }
+            td:nth-of-type(3):before { content: "Nome da Empresa"; }
+            td:nth-of-type(4):before { content: "Ramal"; }
+            td:nth-of-type(5):before { content: "Setor"; }
+
+        }
+    </style>
+</head>
+<body>
+    <h1>Retira UND-304</h1>
+    <div class="table-container">
+        <table id="dados-table">
+            <thead>
+                <tr>
+                    <th>Data e Hora</th>
+                    <th>Nome da Empresa</th>
+                    <th>Contato</th>
+                    <th>Setor</th>
+                </tr>
+            </thead>
+            <tbody id="dados-body">
+                <!-- Dados serão inseridos dinamicamente aqui -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function carregarDados() {
+            try {
+                const response = await fetch('http://localhost:5000/dados');
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar dados');
+                }
+                const dados = await response.json();
+                const tableBody = document.getElementById('dados-body');
+                
+                tableBody.innerHTML = ''; // Limpa a tabela antes de adicionar os dados
+                
+                dados.forEach(dado => {
+                    const row = document.createElement('tr');
+                    Object.keys(dado).forEach(key => {
+                        const cell = document.createElement('td');
+                        cell.textContent = dado[key];
+                        row.appendChild(cell);
+                    });
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Erro:', error.message);
+            }
+        }
+
+        setInterval(carregarDados, 5000); // Atualiza a cada 5 segundos
+        window.onload = carregarDados;
+    </script>
+</body>
+</html>
