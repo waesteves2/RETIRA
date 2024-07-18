@@ -102,7 +102,7 @@
     <script>
         async function carregarDados() {
             try {
-                // Substitua '172.29.33.103' pelo IP desejado
+                // Substitua '172.29.33.103' pelo IP da máquina que executa o servidor Flask
                 const response = await fetch('http://172.29.33.103:5000/dados');
                 if (!response.ok) {
                     throw new Error('Erro ao carregar dados');
