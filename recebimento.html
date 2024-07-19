@@ -1,102 +1,55 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retira</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        .received-data {
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: #e9e9e9;
-            border-radius: 5px;
-        }
-        .received-data p {
-            margin: 0;
-            padding: 5px 0;
-        }
-    </style>
+  <title>Sistema de Recebimento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #mensagens {
+      border: 1px solid #ccc;
+      padding: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    p {
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Retira</h2>
-        <div id="received-container"></div>
-    </div>
-    <script>
-const socket = new WebSocket('wss://172.29.33.103:8080');
+  <h1>Sistema de Recebimento</h1>
+  <div id="mensagens"></div>
 
-socket.onopen = () => {
-  console.log('Conectado ao WebSocket');
-};
+  <script>
+    const socket = new WebSocket('ws://172.29.33.103:8080'); // Substitua pelo endereço IP do seu PC
 
-socket.onmessage = (event) => {
-  console.log('Mensagem recebida:', event.data);
-};
+    socket.onopen = () => {
+      console.log('Conectado ao WebSocket');
+    };
 
-socket.onerror = (error) => {
-  console.error('Erro no WebSocket:', error);
-};
+    socket.onmessage = async (event) => {
+      try {
+        const data = await event.data.text();
+        const parsedData = JSON.parse(data);
+        const mensagensDiv = document.getElementById('mensagens');
+        const novaMensagem = document.createElement('p');
+        novaMensagem.textContent = `Data/Hora: ${parsedData.dataHora}, Cliente: ${parsedData.cliente}, Contato: ${parsedData.contato}, Setor: ${parsedData.setor}, Ramal: ${parsedData.ramal}`;
+        mensagensDiv.appendChild(novaMensagem);
+      } catch (error) {
+        console.error('Erro ao analisar a mensagem recebida:', error);
+      }
+    };
 
-socket.onclose = () => {
-  console.log('WebSocket fechado');
-};
+    socket.onerror = (error) => {
+      console.error('Erro no WebSocket:', error);
+    };
 
-        socket.addEventListener('message', function (event) {
-            if (typeof event.data === 'string') {
-                try {
-                    const data = JSON.parse(event.data);
-                    const container = document.getElementById('received-container');
-                    const receivedDataDiv = document.createElement('div');
-                    receivedDataDiv.className = 'received-data';
-
-                    for (const key in data) {
-                        const p = document.createElement('p');
-                        p.textContent = `${key}: ${data[key]}`;
-                        receivedDataDiv.appendChild(p);
-                    }
-
-                    container.appendChild(receivedDataDiv);
-                } catch (error) {
-                    console.error('Erro ao analisar a mensagem recebida:', error);
-                }
-            } else if (event.data instanceof Blob) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                    try {
-                        const data = JSON.parse(reader.result);
-                        const container = document.getElementById('received-container');
-                        const receivedDataDiv = document.createElement('div');
-                        receivedDataDiv.className = 'received-data';
-
-                        for (const key in data) {
-                            const p = document.createElement('p');
-                            p.textContent = `${key}: ${data[key]}`;
-                            receivedDataDiv.appendChild(p);
-                        }
-
-                        container.appendChild(receivedDataDiv);
-                    } catch (error) {
-                        console.error('Erro ao analisar o Blob recebido:', error);
-                    }
-                };
-                reader.readAsText(event.data);
-            }
-        });
-    </script>
+    socket.onclose = () => {
+      console.log('WebSocket fechado');
+    };
+  </script>
 </body>
 </html>

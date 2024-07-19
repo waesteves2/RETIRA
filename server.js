@@ -1,13 +1,6 @@
-const fs = require('fs');
-const https = require('https');
 const WebSocket = require('ws');
 
-const server = https.createServer({
-  key: fs.readFileSync('path/to/your/private.key'),
-  cert: fs.readFileSync('path/to/your/certificate.crt'),
-});
-
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ port: 8080 });
 
 wss.on('connection', (ws) => {
   console.log('Cliente conectado');
@@ -16,7 +9,7 @@ wss.on('connection', (ws) => {
     console.log(`Recebido: ${message}`);
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        client.send(message.toString()); // Garantir que a mensagem seja uma string
       }
     });
   });
@@ -26,6 +19,4 @@ wss.on('connection', (ws) => {
   });
 });
 
-server.listen(8080, () => {
-  console.log('Servidor WebSocket seguro ouvindo na porta 8080');
-});
+console.log('Servidor WebSocket ouvindo na porta 8080');

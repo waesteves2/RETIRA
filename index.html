@@ -1,132 +1,95 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Envio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #4CAF50;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+  <title>Sistema de Envio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Agendar Retira</h2>
-        <form id="envio-form">
-            <div class="form-group">
-                <label for="datetime">Data e Hora</label>
-                <input type="text" id="datetime" name="datetime" readonly>
-            </div>
-            <div class="form-group">
-                <label for="cliente">Cliente</label>
-                <input type="text" id="cliente" name="cliente" required>
-            </div>
-            <div class="form-group">
-                <label for="contato">Contato</label>
-                <input type="text" id="contato" name="contato" required>
-            </div>
-            <div class="form-group">
-                <label for="setor">Setor</label>
-                <select id="setor" name="setor" required>
-                    <option value="JAU-1">JAU-1</option>
-                    <option value="JAU-2">JAU-2</option>
-                    <option value="AVENIDA">AVENIDA</option>
-                    <option value="CENTRO">CENTRO</option>
-                    <option value="DOIS CORREGOS">DOIS CORREGOS</option>
-                    <option value="BARRA BONITA">BARRA BONITA</option>
-                    <option value="BOCAINA">BOCAINA</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="ramal">Ramal</label>
-                <input type="text" id="ramal" name="ramal" required>
-            </div>
-            <button type="button" onclick="enviarDados()">Enviar</button>
-        </form>npm install -g wscat
-
+  <h1>Sistema de Envio</h1>
+  <form id="envioForm">
+    <div class="form-group">
+      <label>Data/Hora</label>
+      <input type="text" id="dataHora" readonly>
     </div>
-    <script>
-const socket = new WebSocket('wss://172.29.33.103:8080');
+    <div class="form-group">
+      <label>Cliente</label>
+      <input type="text" id="cliente" required>
+    </div>
+    <div class="form-group">
+      <label>Contato</label>
+      <input type="text" id="contato" required>
+    </div>
+    <div class="form-group">
+      <label>Setor</label>
+      <select id="setor" required>
+        <option value="JAU-1">JAU-1</option>
+        <option value="JAU-2">JAU-2</option>
+        <option value="AVENIDA">AVENIDA</option>
+        <option value="CENTRO">CENTRO</option>
+        <option value="DOIS CORREGOS">DOIS CORREGOS</option>
+        <option value="BARRA BONITA">BARRA BONITA</option>
+        <option value="BOCAINA">BOCAINA</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Ramal</label>
+      <input type="text" id="ramal" required>
+    </div>
+    <button type="submit">Enviar</button>
+  </form>
 
-socket.onopen = () => {
-  console.log('Conectado ao WebSocket');
-};
+  <script>
+    const socket = new WebSocket('ws://172.29.33.103:8080'); // Substitua pelo endereço IP do seu PC
 
-socket.onmessage = (event) => {
-  console.log('Mensagem recebida:', event.data);
-};
+    socket.onopen = () => {
+      console.log('Conectado ao WebSocket');
+    };
 
-socket.onerror = (error) => {
-  console.error('Erro no WebSocket:', error);
-};
+    socket.onerror = (error) => {
+      console.error('Erro no WebSocket:', error);
+    };
 
-socket.onclose = () => {
-  console.log('WebSocket fechado');
-};
+    socket.onclose = () => {
+      console.log('WebSocket fechado');
+    };
 
-        function updateDateTime() {
-            const now = new Date();
-            const formattedDateTime = now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-            document.getElementById('datetime').value = formattedDateTime;
-        }
+    document.getElementById('envioForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      
+      const dataHora = new Date().toLocaleString();
+      const cliente = document.getElementById('cliente').value;
+      const contato = document.getElementById('contato').value;
+      const setor = document.getElementById('setor').value;
+      const ramal = document.getElementById('ramal').value;
 
-        function enviarDados() {
-            const form = document.getElementById('envio-form');
-            const formData = new FormData(form);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
+      const mensagem = JSON.stringify({ dataHora, cliente, contato, setor, ramal });
+      socket.send(mensagem);
 
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify(data));
-                form.reset();
-                updateDateTime();
-            }
-        }
+      document.getElementById('cliente').value = '';
+      document.getElementById('contato').value = '';
+      document.getElementById('setor').value = '';
+      document.getElementById('ramal').value = '';
+      document.getElementById('dataHora').value = dataHora;
+    });
 
-        socket.addEventListener('open', function (event) {
-            updateDateTime();
-        });
-    </script>
+    document.getElementById('dataHora').value = new Date().toLocaleString();
+  </script>
 </body>
 </html>
