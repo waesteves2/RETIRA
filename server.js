@@ -2,10 +2,9 @@ const fs = require('fs');
 const https = require('https');
 const WebSocket = require('ws');
 
-// Configuração do servidor HTTPS
 const server = https.createServer({
+  key: fs.readFileSync('path/to/your/private.key'),
   cert: fs.readFileSync('path/to/your/certificate.crt'),
-  key: fs.readFileSync('path/to/your/private.key')
 });
 
 const wss = new WebSocket.Server({ server });
