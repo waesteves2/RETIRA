@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Envio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Agendar Retira</h2>
+        <form id="envio-form">
+            <div class="form-group">
+                <label for="datetime">Data e Hora</label>
+                <input type="text" id="datetime" name="datetime" readonly>
+            </div>
+            <div class="form-group">
+                <label for="cliente">Cliente</label>
+                <input type="text" id="cliente" name="cliente" required>
+            </div>
+            <div class="form-group">
+                <label for="contato">Contato</label>
+                <input type="text" id="contato" name="contato" required>
+            </div>
+            <div class="form-group">
+                <label for="setor">Setor</label>
+                <select id="setor" name="setor" required>
+                    <option value="JAU-1">JAU-1</option>
+                    <option value="JAU-2">JAU-2</option>
+                    <option value="AVENIDA">AVENIDA</option>
+                    <option value="CENTRO">CENTRO</option>
+                    <option value="DOIS CORREGOS">DOIS CORREGOS</option>
+                    <option value="BARRA BONITA">BARRA BONITA</option>
+                    <option value="BOCAINA">BOCAINA</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ramal">Ramal</label>
+                <input type="text" id="ramal" name="ramal" required>
+            </div>
+            <button type="button" onclick="enviarDados()">Enviar</button>
+        </form>
+    </div>
+    <script>
+        const socket = new WebSocket('ws://localhost:8080');
+
+        function updateDateTime() {
+            const now = new Date();
+            const formattedDateTime = now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+            document.getElementById('datetime').value = formattedDateTime;
+        }
+
+        function enviarDados() {
+            const form = document.getElementById('envio-form');
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(data));
+                form.reset();
+                updateDateTime();
+            }
+        }
+
+        socket.addEventListener('open', function (event) {
+            updateDateTime();
+        });
+    </script>
+</body>
+</html>
