@@ -72,12 +72,11 @@
                 font-weight: bold;
                 color: #0000CD;
             }
-            td:nth-of-type(1):before { content: "Contato"; }
-            td:nth-of-type(2):before { content: "Data e Hora"; }
-            td:nth-of-type(3):before { content: "Nome da Empresa"; }
-            td:nth-of-type(4):before { content: "Ramal"; }
-            td:nth-of-type(5):before { content: "Setor"; }
-
+            td:nth-of-type(1):before { content: "Data e Hora"; }
+            td:nth-of-type(2):before { content: "Nome da Empresa"; }
+            td:nth-of-type(3):before { content: "Contato"; }
+            td:nth-of-type(4):before { content: "Setor"; }
+            td:nth-of-type(5):before { content: "Ramal"; }
         }
     </style>
 </head>
@@ -91,6 +90,7 @@
                     <th>Nome da Empresa</th>
                     <th>Contato</th>
                     <th>Setor</th>
+                    <th>Ramal</th>
                 </tr>
             </thead>
             <tbody id="dados-body">
@@ -104,9 +104,11 @@
             try {
                 // Substitua '172.29.33.103' pelo IP da máquina que executa o servidor Flask
                 const response = await fetch('http://172.29.33.103:5000/dados');
+                
                 if (!response.ok) {
                     throw new Error('Erro ao carregar dados');
                 }
+                
                 const dados = await response.json();
                 const tableBody = document.getElementById('dados-body');
                 
