@@ -38,7 +38,7 @@
         <div id="received-container"></div>
     </div>
     <script>
-const socket = new WebSocket('ws://172.29.33.103:8080');
+const socket = new WebSocket('wss://172.29.33.103:8080');
 
         socket.addEventListener('message', function (event) {
             if (typeof event.data === 'string') {

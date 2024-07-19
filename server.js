@@ -2,7 +2,7 @@ const fs = require('fs');
 const https = require('https');
 const WebSocket = require('ws');
 
-// Certificados SSL
+// Configura o servidor HTTPS
 const server = https.createServer({
   cert: fs.readFileSync('path/to/your/certificate.crt'),
   key: fs.readFileSync('path/to/your/private.key')
