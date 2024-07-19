@@ -40,6 +40,22 @@
     <script>
 const socket = new WebSocket('wss://172.29.33.103:8080');
 
+socket.onopen = () => {
+  console.log('Conectado ao WebSocket');
+};
+
+socket.onmessage = (event) => {
+  console.log('Mensagem recebida:', event.data);
+};
+
+socket.onerror = (error) => {
+  console.error('Erro no WebSocket:', error);
+};
+
+socket.onclose = () => {
+  console.log('WebSocket fechado');
+};
+
         socket.addEventListener('message', function (event) {
             if (typeof event.data === 'string') {
                 try {
