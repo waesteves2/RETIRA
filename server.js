@@ -10,7 +10,6 @@ wss.on('connection', (ws) => {
 
   ws.on('message', (message) => {
     console.log(`Recebido: ${message}`);
-    // Envia a mensagem como JSON para todos os clientes conectados
     const jsonMessage = JSON.stringify({ message });
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
@@ -24,6 +23,7 @@ wss.on('connection', (ws) => {
   });
 });
 
-server.listen(8080, () => {
+// Escuta em todas as interfaces de rede
+server.listen(8080, '0.0.0.0', () => {
   console.log('Servidor WebSocket ouvindo na porta 8080');
 });
