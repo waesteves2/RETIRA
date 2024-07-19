@@ -1,8 +1,13 @@
+const fs = require('fs');
+const https = require('https');
 const WebSocket = require('ws');
-const http = require('http');
 
-// Cria um servidor HTTP
-const server = http.createServer();
+// Certificados SSL
+const server = https.createServer({
+  cert: fs.readFileSync('path/to/your/certificate.crt'),
+  key: fs.readFileSync('path/to/your/private.key')
+});
+
 const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (ws) => {
@@ -23,7 +28,6 @@ wss.on('connection', (ws) => {
   });
 });
 
-// Escuta em todas as interfaces de rede
-server.listen(8080, '0.0.0.0', () => {
-  console.log('Servidor WebSocket ouvindo na porta 8080');
+server.listen(8080, () => {
+  console.log('Servidor WebSocket seguro ouvindo na porta 8080');
 });
